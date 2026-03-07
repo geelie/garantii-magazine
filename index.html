@@ -544,7 +544,7 @@
                             <p><b>TEL:</b> ${f.tel_client || '-'}</p>
                             <p><b>EMAIL:</b> ${f.email_client || '-'}</p>
                             <p><b>ADRESA:</b> ${f.adresa_client || '-'}</p>
-                            <p><b>DATA ÎNREG.:</b> ${f.created_at ? new Date(f.created_at).toLocaleString('ro-RO', { timeZone: 'Europe/Bucharest' }).replace(',', '') : '-'}</p>
+                            <p><b>DATA ÎNREG.:</b> ${f.created_at ? f.created_at.substring(0, 19).replace('T', ' ') : '-'}</p>
                         </div>
                         <div class="space-y-1 md:space-y-2">
                             <h4 class="font-black border-b-2 border-slate-900 text-slate-900 uppercase text-[9px] md:text-[11px] pb-1 tracking-widest">2. Date Produs</h4>
@@ -683,7 +683,7 @@
             const rows = data.map((f, idx) => ({
                 "Nr. Crt": idx + 1,
                 "ID Fisa": f.id,
-                "Data Inregistrare": f.created_at ? new Date(f.created_at).toLocaleString('ro-RO', { timeZone: 'Europe/Bucharest' }).replace(',', '') : '',
+                "Data Inregistrare": f.created_at ? f.created_at.substring(0, 19).replace('T', ' ') : '',
                 "Nume Client": f.nume_client,
                 "Telefon": f.tel_client,
                 "Email": f.email_client,
@@ -720,6 +720,7 @@
 
 
 </html>
+
 
 
 
