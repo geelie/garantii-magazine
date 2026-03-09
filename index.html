@@ -176,7 +176,7 @@
                 </div>
             </div>
 
-            <div id="tab-add" class="tab-content max-w-6xl mx-auto">
+          <div id="tab-add" class="tab-content max-w-6xl mx-auto">
                 <div id="edit-indicator" class="hidden bg-amber-100 text-amber-900 p-3 rounded-lg mb-4 font-black text-center border-2 border-amber-400 uppercase text-[10px] md:text-xs">
                     Mod EDITARE activ: <span id="edit-id-display"></span>. 
                     <button onclick="cancelEdit()" class="underline ml-4 text-red-700">ANULEAZĂ</button>
@@ -186,10 +186,22 @@
                     
                     <div class="space-y-4">
                         <h3 class="font-black text-blue-700 border-b-2 border-blue-100 pb-2 uppercase text-[10px] italic tracking-wider">1. Date Client</h3>
-                        <input type="text" id="c-nume" placeholder="Nume Prenume" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm" required>
-                        <input type="text" id="c-tel" placeholder="Nr. Telefon" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
-                        <input type="email" id="c-email" placeholder="Email" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
-                        <input type="text" id="c-adr" placeholder="Adresa domiciliu" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
+                       <div>
+                            <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Nume Prenume</label>
+                            <input type="text" id="c-nume" placeholder="Nume Prenume" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm" required>
+                       </div>
+                       <div>
+                            <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Număr telefon</label>
+                            <input type="text" id="c-tel" placeholder="Nr. Telefon" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-black text-slate-800 uppercase ml-1">E-mail</label>
+                            <input type="email" id="c-email" placeholder="Email" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
+                       </div>
+                       <div>
+                            <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Adresa domiciliu</label>
+                            <input type="text" id="c-adr" placeholder="Adresa domiciliu" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
+                        </div>
                         <div>
                             <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Data Înregistrare</label>
                             <input type="datetime-local" id="c-data-auto" class="w-full p-3 border-2 border-slate-200 rounded-lg bg-slate-50 font-bold text-sm">
@@ -199,6 +211,8 @@
                     <div class="space-y-4">
                         <h3 class="font-black text-blue-700 border-b-2 border-blue-100 pb-2 uppercase text-[10px] italic tracking-wider">2. Date Produs</h3>
                         <div class="space-y-2">
+                            <div>
+                                <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Categorie Produs</label>
                             <select id="p-cat" onchange="toggleAltCategorie()" class="w-full p-3 border-2 border-slate-200 rounded-lg text-sm font-black bg-slate-50">
                                 <option value="Bicicleta electrica">Bicicletă Electrică</option>
                                 <option value="Tricicleta electrica">Tricicletă Electrică</option>
@@ -207,19 +221,35 @@
                                 <option value="Alta">Alta (Specificați mai jos)</option>
                             </select>
                             <input type="text" id="p-cat-alt" placeholder="Introduceți categoria..." class="hidden w-full p-3 border-2 border-blue-400 rounded-lg font-bold bg-blue-50 text-blue-900 text-sm">
+                       </div>
                         </div>
-                        <input type="text" id="p-vin" placeholder="Serie VIN" class="w-full p-3 border-2 border-slate-200 rounded-lg font-mono font-black uppercase text-blue-800 text-sm">
-                        <input type="text" id="p-mod" placeholder="Marcă / Model" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
-                        <div class="flex flex-col sm:flex-row gap-2">
+                       <div>
+                             <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Serie VIN</label>
+                             <input type="text" id="p-vin" placeholder="Serie VIN" class="w-full p-3 border-2 border-slate-200 rounded-lg font-mono font-black uppercase text-blue-800 text-sm">
+                       </div>
+                       <div>
+                             <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Marcă / Model</label>
+                             <input type="text" id="p-mod" placeholder="Marcă / Model" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">
+                       </div>                  
+                            <div class="flex flex-col sm:flex-row gap-2">
+                        <div>
+                            <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Emitent / Nr. Factură / Data Fact.</label>
                             <input type="text" id="p-fact" placeholder="Emitent/Factură" class="w-full sm:w-1/2 p-3 border-2 border-slate-200 rounded-lg text-xs font-bold">
-                            <input type="date" id="p-dfact" class="w-full sm:w-1/2 p-3 border-2 border-slate-200 rounded-lg text-xs font-bold">
+                         </div>  
+                            <input type="date" id="p-dfact" class="w-full sm:w-1/2 p-3 border-2 border-slate-200 rounded-lg text-xs font-bold">       
                         </div>
+                        <div>
+                        <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Stare</label>
                         <select id="p-gar" class="w-full p-3 border-2 border-slate-200 rounded-lg text-sm font-bold">
                             <option value="In garantie">În Garanție</option>
                             <option value="Post garantie">Post Garanție</option>
                         </select>
-                        <input type="text" id="p-obs-produs" placeholder="Observații (Accesorii, starea etc.)" class="w-full p-3 border-2 border-slate-200 rounded-lg text-xs font-semibold">
-                        <div>
+                        </div>
+                        <div>  
+                            <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Observații</label>
+                            <input type="text" id="p-obs-produs" placeholder="Observații (Accesorii, starea etc.)" class="w-full p-3 border-2 border-slate-200 rounded-lg text-xs font-semibold">
+                       </div>
+                       <div>
                             <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Data Predării Fizice</label>
                             <input type="date" id="p-dprel" class="w-full p-3 border-2 border-slate-200 rounded-lg text-sm font-bold">
                         </div>
@@ -748,6 +778,7 @@
 
 
 </html>
+
 
 
 
