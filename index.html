@@ -605,8 +605,8 @@
                         <div class="bg-slate-200 p-4 rounded-xl flex flex-col gap-3 shadow-inner">
                             <span class="text-[10px] font-black uppercase text-slate-800">Alocare & Status (ADMIN):</span>
                             <div class="flex gap-2">
-                                <select id="sel-aloca" class="flex-grow p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white">
-                                    <option value="${f.alocat_catre}">${f.alocat_catre}</option>
+                                <select id="sel-aloca" class="flex-grow p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white text-slate-900">
+    <option value="${f.alocat_catre}">${f.alocat_catre}</option>
                                     <option value="Propriu">1. Service Propriu</option>
                                     <option value="Ridicare1">2. RIDICARE1</option>
                                     <option value="Ridicare2">3. RIDICARE2</option>
@@ -617,7 +617,7 @@
                                     <option value="TRANDAFIR GROSU PFA">8. TRANDAFIR GROSU PFA</option>
                                     <option value="TRUST AGROSERV">9. TRUST AGROSERV</option>
                                 </select><br>
-                                <select id="sel-status-admin" class="p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white">
+                                <select id="sel-status-admin" class="p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white text-slate-900">
                                     <option value="În lucru" ${f.status==='În lucru'?'selected':''}>În lucru</option>
                                     <option value="Finalizat" ${f.status==='Finalizat'?'selected':''}>Finalizat</option>
                                 </select><br>
@@ -748,6 +748,7 @@
 
 
 </html>
+
 
 
 
