@@ -631,7 +631,7 @@
  <div class="mt-auto pt-4 text-[11px] leading-tight text-slate-400 italic border-t border-slate-100">
     <p class="mb-2">Notă: Datele cu caracter personal din acest document sunt prelucrate în conformitate cu prevederile Regulamentului (UE) 2016/679 (GDPR). Prin semnarea/transmiterea acestui document, vă exprimați acordul pentru prelucrarea datelor în scopul prestării serviciilor</p>
                 <div class="mt-8 no-print pt-4 border-t-2 border-dashed border-slate-300 space-y-4">
-                    ${activeUser.rol === 'admin' ? `
+                   ${activeUser.rol === 'admin' ? `
                         <div class="bg-slate-200 p-4 rounded-xl flex flex-col gap-3 shadow-inner">
                             <span class="text-[10px] font-black uppercase text-slate-800">Alocare & Status (ADMIN):</span>
                             <div class="flex gap-2">
@@ -652,24 +652,49 @@
                                     <option value="Finalizat" ${f.status==='Finalizat'?'selected':''}>Finalizat</option>
                                 </select><br>
                             </div>
-                            <button onclick="saveAlocare()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-black text-[10px] uppercase active:scale-95">Actualizează Alocarea</button>
+                            <div class="flex justify-center w-full mt-4">
+    <button onclick="saveAlocare()" class="px-8 bg-blue-600 text-white py-3 rounded-lg font-black text-[10px] uppercase active:scale-95">
+        Actualizează Alocarea
+    </button>
+</div>
                         </div>` : ''}
                     ${canEditReport ? `
                         <div class="bg-blue-700 p-4 md:p-8 rounded-2xl text-white shadow-2xl">
                             <h4 class="font-black uppercase mb-4 italic text-sm md:text-lg">Raport Tehnic - ${activeUser.rol === 'admin' ? 'MOD ADMIN' : 'MOD SERVICE'}</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4 text-slate-900">
-                                <input type="text" id="s-teh" value="${f.tehnician || ''}" placeholder="Tehnician" class="p-3 rounded-lg text-xs font-bold border-2">
-                                ${(isPropriuType || activeUser.rol === 'admin') ? `
-                                    <input type="text" id="s-km" value="${f.km || ''}" placeholder="Km" class="p-3 rounded-lg text-xs font-bold border-2">
-                                    <input type="text" id="s-ore" value="${f.ore || ''}" placeholder="Ore" class="p-3 rounded-lg text-xs font-bold border-2">
-                                ` : ''}
-                                ${(!isPropriuType || activeUser.rol === 'admin') ? `
-                                    <input type="text" id="s-cost" value="${f.cost || ''}" placeholder="Cost" class="p-3 rounded-lg text-xs font-bold border-2">
-                                    <input type="text" id="s-emi" value="${f.emitent_factura_service || ''}" placeholder="Factura" class="p-3 rounded-lg text-xs font-bold border-2">
-                                ` : ''}
-                            </div>
-                            <textarea id="s-rap" placeholder="Descrieți lucrarea..." class="w-full p-3 rounded-xl text-slate-900 text-xs font-bold mb-4 h-24 border-2">${f.raport_reparatie || ''}</textarea>
-                            <div class="flex flex-col md:flex-row gap-2">
+                           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4 text-slate-900">
+    <div> 
+        <label class="text-[9px] font-black text-white uppercase ml-1">Tehnician</label>
+        <input type="text" id="s-teh" value="${f.tehnician || ''}" placeholder="Tehnician" class="w-full p-3 rounded-lg text-xs font-bold border-2">
+    </div>
+
+    ${(isPropriuType || activeUser.rol === 'admin') ? `
+    <div> 
+        <label class="text-[9px] font-black text-white uppercase ml-1">Km.</label>
+        <input type="text" id="s-km" value="${f.km || ''}" placeholder="Km" class="w-full p-3 rounded-lg text-xs font-bold border-2">
+    </div>
+    <div> 
+        <label class="text-[9px] font-black text-white uppercase ml-1">Ore</label>
+        <input type="text" id="s-ore" value="${f.ore || ''}" placeholder="Ore" class="w-full p-3 rounded-lg text-xs font-bold border-2">
+    </div>
+    ` : ''}
+
+    ${(!isPropriuType || activeUser.rol === 'admin') ? `
+    <div> 
+        <label class="text-[9px] font-black text-white uppercase ml-1">Cost</label>
+        <input type="text" id="s-cost" value="${f.cost || ''}" placeholder="Cost" class="w-full p-3 rounded-lg text-xs font-bold border-2">
+    </div>
+    <div> 
+        <label class="text-[9px] font-black text-white uppercase ml-1">Factura</label> 
+        <input type="text" id="s-emi" value="${f.emitent_factura_service || ''}" placeholder="Factura" class="w-full p-3 rounded-lg text-xs font-bold border-2">
+    </div>
+    ` : ''}
+    </div>
+   <div class="col-span-1 sm:col-span-2 md:col-span-full"> 
+    <label class="text-[9px] font-black text-white uppercase ml-1">Raport Reparații / Observații</label>
+    <textarea id="s-rap" placeholder="Descrieți lucrarea..." 
+              class="w-full p-3 rounded-xl text-slate-900 text-xs font-bold mb-4 h-24 border-2">${f.raport_reparatie || ''}</textarea>
+</div>                       
+          <div class="flex flex-col md:flex-row gap-2">
                                 <button onclick="saveRaport(false)" class="bg-slate-800 py-3 md:py-4 rounded-xl font-black uppercase text-[10px] flex-grow">Salvează Ciornă</button>
                                 <button onclick="saveRaport(true)" class="bg-green-500 py-3 md:py-4 rounded-xl font-black uppercase text-[10px] flex-grow shadow-lg active:scale-95">Finalizează Lucrarea</button>
                             </div>
@@ -775,22 +800,4 @@
         }
     </script>
 </body>
-
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
