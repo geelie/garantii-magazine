@@ -92,9 +92,9 @@
                 <input type="password" id="r-pass" placeholder="Parolă" class="w-full p-3 border-2 border-slate-200 rounded-lg">
                 <select id="r-service" class="w-full p-3 border-2 border-slate-200 rounded-lg font-bold bg-slate-50">
                     <option value="Propriu">1. Service Propriu</option>
-                    <option value="Ridicare1">2. RIDICARE1</option>
-                    <option value="Ridicare2">3. RIDICARE2</option>
-                    <option value="Ridicare3">4. RIDICARE3</option>
+                    <option value="SERVICE PROPRIU 1">2. SERVICE PROPRIU 1</option>
+                    <option value="SERVICE PROPRIU 2">3. SERVICE PROPRIU 2</option>
+                    <option value="RIDICARE">4. RIDICARE</option>
                     <option value="BUXI PROFESIONAL">5. BUXI PROFESIONAL</option>
                     <option value="MIXX MOTION">6. MIXX MOTION</option>
                     <option value="PGC GRAND TOTAL">7. PGC GRAND TOTAL</option>
@@ -425,32 +425,45 @@
             }
         }
 
-        async function loadFise() {
-            if(activeUser.rol === 'none') {
-                document.getElementById('fise-rows').innerHTML = '<tr><td colspan="7" class="p-10 text-center font-black text-red-600 uppercase">Cont neactivat.</td></tr>';
-                return;
-            }
-            let q = _supa.from('fise').select('*');
-            if(activeUser.rol !== 'admin') q = q.eq('alocat_catre', activeUser.service);
-            const { data } = await q.order('created_at', { ascending: true });
-            if(!data) return;
-            const displayData = [...data].reverse();
-            const body = document.getElementById('fise-rows');
-            body.innerHTML = '';
-            displayData.forEach((f) => {
-                const nrCrt = data.findIndex(x => x.id === f.id) + 1;
-                const vch = calcVechime(f.data_preluare_fizica);
-                body.innerHTML += `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-100">
-                    ${activeUser.rol === 'admin' ? `<td class="p-4 font-black text-slate-400 text-xs">${nrCrt}</td>` : ''}
-                    <td class="p-4 font-mono font-black text-blue-700 text-xs">${f.id}</td>
-                    <td class="p-4 font-black text-slate-900">${f.nume_client}</td>
-                    <td class="p-4 text-xs font-bold text-slate-800">${f.marca_model}<br><span class="text-blue-600 font-black uppercase text-[10px]">${f.vin_produs}</span></td>
-                    <td class="p-4 text-[10px] font-black ${vch.color}">${vch.text}</td>
-                    <td class="p-4"><span class="px-2 py-1 rounded-full text-[9px] font-black uppercase ${f.status==='Finalizat'?'bg-green-600 text-white':'bg-amber-500 text-white'}">${f.status}</span></td>
-                    <td class="p-4 text-[9px] font-black text-slate-700 italic">${f.alocat_catre}</td>
-                </tr>`;
-            });
-        }
+      async function loadFise() {
+    if(activeUser.rol === 'none') {
+        document.getElementById('fise-rows').innerHTML = '<tr><td colspan="7" class="p-10 text-center font-black text-red-600 uppercase">Cont neactivat.</td></tr>';
+        return;
+    }
+    let q = _supa.from('fise').select('*').eq('is_deleted', false);
+
+    if(activeUser.rol !== 'admin') {
+        q = q.eq('alocat_catre', activeUser.service);
+    }
+
+    const { data, error } = await q.order('created_at', { ascending: true });
+
+    if(error) {
+        console.error("Eroare la încărcarea fișelor:", error.message);
+        return;
+    }
+
+    if(!data) return;
+
+    const displayData = [...data].reverse();
+    const body = document.getElementById('fise-rows');
+    body.innerHTML = '';
+
+    displayData.forEach((f) => {
+        const nrCrt = data.findIndex(x => x.id === f.id) + 1;
+        const vch = calcVechime(f.data_preluare_fizica);
+        
+        body.innerHTML += `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-100">
+            ${activeUser.rol === 'admin' ? `<td class="p-4 font-black text-slate-400 text-xs">${nrCrt}</td>` : ''}
+            <td class="p-4 font-mono font-black text-blue-700 text-xs">${f.id}</td>
+            <td class="p-4 font-black text-slate-900">${f.nume_client}</td>
+            <td class="p-4 text-xs font-bold text-slate-800">${f.marca_model}<br><span class="text-blue-600 font-black uppercase text-[10px]">${f.vin_produs}</span></td>
+            <td class="p-4 text-[10px] font-black ${vch.color}">${vch.text}</td>
+            <td class="p-4"><span class="px-2 py-1 rounded-full text-[9px] font-black uppercase ${f.status==='Finalizat'?'bg-green-600 text-white':'bg-amber-500 text-white'}">${f.status}</span></td>
+            <td class="p-4 text-[9px] font-black text-slate-700 italic">${f.alocat_catre}</td>
+        </tr>`;
+    });
+}
 
         function calcVechime(dateStr) {
             if(!dateStr) return { text: "-", color: "text-slate-400" };
@@ -540,12 +553,27 @@
             document.getElementById('c-data-auto').value = getRoTime();
         }
 
-        async function deleteFisa() {
-            if(confirm("Ștergi definitiv această fișă?")) {
-                await _supa.from('fise').delete().eq('id', currentFisa.id);
-                closeModal(); loadFise();
-            }
+       async function deleteFisa() {
+    if(confirm(`Sigur doriți să mutați fișa ${currentFisa.id} în arhiva de ștergeri?`)) {
+        const { error } = await _supa
+            .from('fise')
+            .update({ 
+                is_deleted: true,
+                deleted_at: new Date().toISOString(),
+                deleted_by_username: activeUser.username, // Username-ul adminului care a șters
+                deleted_by_name: activeUser.nume_complet   // Numele complet al adminului
+            })
+            .eq('id', currentFisa.id);
+
+        if (error) {
+            alert("Eroare la ștergere: " + error.message);
+        } else {
+            alert("Fișa a fost arhivată cu succes.");
+            closeModal();
+            loadFise(); // Reîncărcăm lista pentru a ascunde fișa
         }
+    }
+}
 
         function openFisa(f) {
             currentFisa = f;
@@ -554,7 +582,7 @@
             document.getElementById('admin-delete-btn').classList.toggle('hidden', activeUser.rol !== 'admin');
             const vch = calcVechime(f.data_preluare_fizica);
             const canEditReport = (activeUser.rol === 'admin' || (activeUser.service === f.alocat_catre && f.status === 'În lucru'));
-            const isPropriuType = (f.alocat_catre === 'Propriu' || f.alocat_catre === 'Ridicare1' || f.alocat_catre === 'Ridicare2' || f.alocat_catre === 'Ridicare3');
+            const isPropriuType = (f.alocat_catre === 'Propriu' || f.alocat_catre === 'SERVICE PROPRIU 1' || f.alocat_catre === 'SERVICE PROPRIU 2' || f.alocat_catre === 'RIDICARE');
 
             document.getElementById('v-render-area').innerHTML = `
                 <div class="flex-grow">
@@ -638,9 +666,9 @@
                                 <select id="sel-aloca" class="flex-grow p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white text-slate-900">
     <option value="${f.alocat_catre}">${f.alocat_catre}</option>
                                     <option value="Propriu">1. Service Propriu</option>
-                                    <option value="Ridicare1">2. RIDICARE1</option>
-                                    <option value="Ridicare2">3. RIDICARE2</option>
-                                    <option value="Ridicare3">4. RIDICARE3</option>
+                                    <option value="SERVICE PROPRIU 1">2. SERVICE PROPRIU 1</option>
+                                    <option value="SERVICE PROPRIU 2">3. SERVICE PROPRIU 2</option>
+                                    <option value="RIDICARE">4. RIDICARE</option>
                                     <option value="BUXI PROFESIONAL">5. BUXI PROFESIONAL</option>
                                     <option value="MIXX MOTION">6. MIXX MOTION</option>
                                     <option value="PGC GRAND TOTAL">7. PGC GRAND TOTAL</option>
