@@ -218,30 +218,26 @@
             <button onclick="switchTab('tab-list')" id="btn-list"
                 class="flex-shrink-0 px-6 md:px-8 py-4 font-black border-b-4 border-blue-600 text-blue-600 text-sm md:text-base">LISTĂ
                 FIȘE</button>
-            <!-- Tab Adaugare: admin = ADĂUGARE / EDITARE, magazin = Adăugare fișe -->
             <button onclick="switchTab('tab-add')" id="btn-add"
-                class="hidden flex-shrink-0 px-6 md:px-8 py-4 font-black text-slate-500 hover:text-blue-600 transition text-sm md:text-base"
-                id="btn-add">ADĂUGARE FIȘE</button>
-            <!-- Tab Utilizatori: vizibil doar admin -->
-            <button onclick="switchTab('tab-users')" id="btn-users"
-                class="hidden flex-shrink-0 px-6 md:px-8 py-4 font-black text-slate-500 hover:text-blue-600 transition text-sm md:text-base uppercase">Utilizatori</button>
+                class="hidden flex-shrink-0 px-6 md:px-8 py-4 font-black text-slate-500 hover:text-blue-600 transition text-sm md:text-base">ADĂUGARE
+                FIȘE</button>
         </div>
 
         <main class="flex-grow p-3 md:p-8">
 
             <!-- TAB LISTA FISE -->
             <div id="tab-list" class="tab-content active">
-                <!-- Export area: doar admin -->
-                <div id="admin-export-area"
-                    class="hidden bg-white p-4 rounded-xl mb-6 border-2 border-blue-100 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-4">
+                <!-- Export Excel -->
+                <div
+                    class="bg-white p-4 rounded-xl mb-6 border-2 border-blue-100 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-4">
                     <div class="flex items-center gap-2 w-full md:w-auto">
                         <span class="text-[10px] font-black uppercase text-blue-700">Export Excel:</span>
                         <select id="export-type"
                             class="flex-grow md:flex-grow-0 p-2 border rounded font-bold text-xs bg-slate-50 outline-none"
                             onchange="toggleExportDates()">
-                            <option value="all">Toate Fișele</option>
-                            <option value="period">Perioadă Specifică</option>
+                            <option value="all">Toate Fișele Mele</option>
                             <option value="current">Afișate acum (Filtrate)</option>
+                            <option value="period">Perioadă Specifică</option>
                         </select>
                     </div>
                     <div id="export-dates" class="hidden flex items-center gap-2 w-full md:w-auto">
@@ -282,7 +278,14 @@
                 <div class="bg-white rounded-2xl shadow-xl overflow-x-auto border border-slate-200">
                     <table class="w-full text-left min-w-[700px]">
                         <thead class="bg-slate-200 text-slate-800 uppercase text-[10px] font-black tracking-widest">
-                            <tr id="table-head-row"></tr>
+                            <tr>
+                                <th class="p-4 border-r border-slate-400">#</th>
+                                <th class="p-4 border-r border-slate-400">ID Fișă</th>
+                                <th class="p-4 border-r border-slate-400">Client / Telefon / Județ</th>
+                                <th class="p-4 border-r border-slate-400">Produs / VIN</th>
+                                <th class="p-4 border-r border-slate-400">Vechime</th>
+                                <th class="p-4">Status</th>
+                            </tr>
                         </thead>
                         <tbody id="fise-rows"
                             class="divide-y divide-slate-200 hover:[&>tr]:bg-blue-50 cursor-pointer text-sm"></tbody>
@@ -290,35 +293,10 @@
                 </div>
             </div>
 
-            <!-- TAB UTILIZATORI: doar admin -->
-            <div id="tab-users" class="tab-content max-w-6xl mx-auto">
-                <h2 class="text-xl font-black mb-4 text-slate-800 uppercase italic">Utilizatori Sistem</h2>
-                <div class="bg-white rounded-2xl shadow-xl overflow-x-auto border border-slate-200">
-                    <table class="w-full text-left min-w-[600px]">
-                        <thead class="bg-slate-800 text-white uppercase text-[10px] font-black tracking-widest">
-                            <tr>
-                                <th class="p-4">Nume Prenume</th>
-                                <th class="p-4">Username</th>
-                                <th class="p-4">Magazin</th>
-                                <th class="p-4">Rol</th>
-                                <th class="p-4 text-center">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-rows" class="divide-y divide-slate-200 text-sm"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB ADAUGARE / EDITARE -->
+            <!-- TAB ADAUGARE FISE -->
             <div id="tab-add" class="tab-content max-w-6xl mx-auto">
-                <div id="edit-indicator"
-                    class="hidden bg-amber-100 text-amber-900 p-3 rounded-lg mb-4 font-black text-center border-2 border-amber-400 uppercase text-[10px] md:text-xs">
-                    Mod EDITARE activ: <span id="edit-id-display"></span>.
-                    <button onclick="cancelEdit()" class="underline ml-4 text-red-700">ANULEAZĂ</button>
-                </div>
                 <form id="form-fisa-noua"
                     class="bg-white p-5 md:p-8 rounded-2xl shadow-2xl grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border border-slate-200">
-                    <input type="hidden" id="edit-fisa-id">
 
                     <!-- Coloana 1: Date Client -->
                     <div class="space-y-4">
@@ -457,13 +435,6 @@
                                 <input type="text" id="p-obs-produs" placeholder="Observații (Accesorii, starea etc.)"
                                     class="w-full p-3 border-2 border-slate-200 rounded-lg text-xs font-semibold">
                             </div>
-                            <!-- Data Predarii Fizice: vizibila doar admin, ascunsa pentru useri magazin -->
-                            <div id="dprel-wrapper">
-                                <label class="text-[9px] font-black text-slate-800 uppercase ml-1">Data Predării
-                                    Fizice</label>
-                                <input type="date" id="p-dprel"
-                                    class="w-full p-3 border-2 border-slate-200 rounded-lg text-sm font-bold">
-                            </div>
                         </div>
                     </div>
 
@@ -492,42 +463,12 @@
                 <button onclick="window.print()"
                     class="bg-blue-600 text-white px-4 md:px-6 py-2 rounded-lg font-black text-[10px] uppercase shadow-xl hover:bg-blue-500 active:scale-95">PRINT
                     / PDF</button>
-                <!-- Editează și Șterge: DOAR admin -->
-                <button id="admin-edit-btn" onclick="startEdit()"
-                    class="hidden bg-amber-500 text-white px-3 md:px-4 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95">Editează</button>
-                <button id="admin-delete-btn" onclick="deleteFisa()"
-                    class="hidden bg-red-600 text-white px-3 md:px-4 py-2 rounded-lg font-black text-[10px] uppercase active:scale-95">Șterge</button>
             </div>
             <button onclick="closeModal()"
                 class="bg-slate-700 text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase">Închide</button>
         </div>
         <div id="a4-content" class="a4-page rounded-sm overflow-hidden">
             <div id="v-render-area" class="h-full flex flex-col"></div>
-        </div>
-    </div>
-
-    <!-- MODAL ARHIVA -->
-    <div id="modal-archive"
-        class="fixed inset-0 bg-black/80 hidden z-[60] overflow-y-auto p-4 flex items-center justify-center no-print">
-        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden">
-            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
-                <h3 class="font-black uppercase italic tracking-tighter">Arhivă Fișe Șterse</h3>
-                <button onclick="closeArchiveModal()" class="text-white font-black text-xl">&times;</button>
-            </div>
-            <div class="p-4 overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-100 text-slate-600 uppercase font-black">
-                        <tr>
-                            <th class="p-3">ID Fișă</th>
-                            <th class="p-3">Data/Ora Ștergerii</th>
-                            <th class="p-3">Nume Administrator</th>
-                            <th class="p-3">Username</th>
-                            <th class="p-3 text-right">Acțiuni</th>
-                        </tr>
-                    </thead>
-                    <tbody id="archive-rows" class="divide-y divide-slate-100 text-slate-900 font-bold"></tbody>
-                </table>
-            </div>
         </div>
     </div>
 
@@ -597,65 +538,16 @@
                 document.getElementById('nav-user-name').innerText = data.nume_complet;
                 document.getElementById('nav-user-info').innerText = `${data.service}`;
 
-                const isAdmin = data.rol === 'admin';
-                const isMagazin = data.rol === 'user' || data.rol === 'magazin';
-
-                // Tab Adaugare: vizibil pentru admin si useri magazin (rol user/magazin)
-                if (isAdmin || isMagazin) {
+                // Tab Adaugare: vizibil pentru useri cu rol user/magazin
+                if (data.rol === 'user' || data.rol === 'magazin') {
                     document.getElementById('btn-add').classList.remove('hidden');
-                    // Eticheta tab
-                    document.getElementById('btn-add').innerText = isAdmin ? 'ADĂUGARE / EDITARE' : 'ADĂUGARE FIȘE';
-                }
-
-                // Tab Utilizatori: doar admin
-                if (isAdmin) {
-                    document.getElementById('btn-users').classList.remove('hidden');
-                }
-                document.getElementById('admin-export-area').classList.remove('hidden');
-
-
-                // Campul "Data Predarii Fizice": ascuns pentru useri magazin
-                if (!isAdmin) {
-                    const dprelWrapper = document.getElementById('dprel-wrapper');
-                    if (dprelWrapper) dprelWrapper.classList.add('hidden');
                 }
 
                 document.getElementById('c-data-auto').value = getRoTime();
-
-                // Construim header-ul tabelului
-                buildTableHeader();
                 loadFise();
             } else {
                 if (!storedU) alert("Date incorecte!");
                 else localStorage.removeItem('geeli_session');
-            }
-        }
-
-        function buildTableHeader() {
-            const isAdmin = activeUser.rol === 'admin';
-            const hRow = document.getElementById('table-head-row');
-
-            if (isAdmin) {
-                // Admin: toate coloanele inclusiv #, Actualizat, Service, Transport
-                hRow.innerHTML = `
-                    <th class="p-4 border-r border-slate-400">#</th>
-                    <th class="p-4 border-r border-slate-400">ID Fișă</th>
-                    <th class="p-4 border-r border-slate-400">Client / Telefon / Județ</th>
-                    <th class="p-4 border-r border-slate-400">Produs / VIN</th>
-                    <th class="p-4 border-r border-slate-400 text-slate-900">Actualizat</th>
-                    <th class="p-4 border-r border-slate-400">Vechime</th>
-                    <th class="p-4 border-r border-slate-400">Status</th>
-                    <th class="p-4 border-r border-slate-400">Service</th>
-                    <th class="p-4">Transport</th>`;
-            } else {
-                // Useri magazin: fara Actualizat, Service, Transport
-                hRow.innerHTML = `
-                    <th class="p-4 border-r border-slate-400">#</th>
-                    <th class="p-4 border-r border-slate-400">ID Fișă</th>
-                    <th class="p-4 border-r border-slate-400">Client / Telefon / Județ</th>
-                    <th class="p-4 border-r border-slate-400">Produs / VIN</th>
-                    <th class="p-4 border-r border-slate-400">Vechime</th>
-                    <th class="p-4">Status</th>`;
             }
         }
 
@@ -688,7 +580,7 @@
                 username: user,
                 password: pass,
                 service: serv,
-                rol: (user.toLowerCase().includes('admin')) ? 'admin' : 'none'
+                rol: 'none'
             };
             const { error } = await _supa.from('profiles').insert([profile]);
             if (error) alert("Eroare: " + error.message);
@@ -699,55 +591,10 @@
         }
 
         // -----------------------------------------------
-        // UTILIZATORI (doar admin)
-        // -----------------------------------------------
-        async function loadUsers() {
-            if (activeUser.rol !== 'admin') return;
-            const { data } = await _supa.from('profiles').select('*').order('nume_complet');
-            const body = document.getElementById('users-rows');
-            body.innerHTML = '';
-            data?.forEach(u => {
-                body.innerHTML += `<tr class="border-b border-slate-100 hover:bg-slate-50">
-                    <td class="p-4 font-black text-slate-900">${u.nume_complet}</td>
-                    <td class="p-4 font-mono font-bold text-blue-600">${u.username}</td>
-                    <td class="p-4 text-xs font-bold text-slate-700">${u.service}</td>
-                    <td class="p-4">
-                        <span class="px-2 py-1 rounded text-[9px] font-black uppercase text-white 
-                        ${u.rol === 'admin' ? 'bg-red-600' : (u.rol === 'user' ? 'bg-green-600' : 'bg-slate-500')}">
-                        ${u.rol || 'none'}
-                        </span>
-                    </td>
-                    <td class="p-4 text-center flex gap-2 justify-center">
-                        ${u.username !== activeUser.username ? `
-                            <button onclick="toggleUserRole('${u.id}', '${u.rol}')" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-black text-[9px]">⇄ROL</button>
-                            <button onclick="deleteUser('${u.username}')" class="bg-red-100 text-red-600 px-2 py-1 rounded font-black text-[9px]">ȘTERGE</button>
-                        ` : '<span class="text-[9px] italic text-slate-400">Activ</span>'}
-                    </td>
-                </tr>`;
-            });
-        }
-
-        async function toggleUserRole(id, currentRole) {
-            let newRole = (currentRole === 'none' || !currentRole) ? 'user' : (currentRole === 'user' ? 'admin' : 'none');
-            if (confirm(`Schimbi accesul în: ${newRole.toUpperCase()}?`)) {
-                await _supa.from('profiles').update({ rol: newRole }).eq('id', id);
-                loadUsers();
-            }
-        }
-
-        async function deleteUser(username) {
-            if (confirm(`Ștergi utilizatorul "${username}"?`)) {
-                await _supa.from('profiles').delete().eq('username', username);
-                loadUsers();
-            }
-        }
-
-        // -----------------------------------------------
         // PAGINARE & FILTRARE
         // -----------------------------------------------
         let ITEMS_PER_PAGE = 50;
         let currentPage = 1;
-        let totalFiseCount = 0;
         let totalFilteredCount = 0;
         let currentSearchQuery = '';
         let currentStatusFilter = 'Toate';
@@ -760,66 +607,31 @@
 
         function buildRow(f, globalNrCrt) {
             const vch = calcVechime(f);
-            const isAdmin = activeUser.rol === 'admin';
-
-            if (isAdmin) {
-                // Randul complet pentru admin
-                const transportStyle = f.tip_transport === 'INTRARE' ? 'text-red-600' : (f.tip_transport === 'IESIRE' ? 'text-green-600' : '');
-                return `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors">
-                    <td class="p-4 border-r border-slate-300 font-black text-slate-400 text-xs">${globalNrCrt}</td>
-                    <td class="p-4 border-r border-slate-300 font-mono font-black text-blue-700 text-xs">${f.id}</td>
-                    <td class="p-4 border-r border-slate-300 font-black text-slate-900">
-                        ${f.nume_client}<br>
-                        <span class="text-blue-600 font-black uppercase text-[10px] inline-flex items-center gap-1">
-                            ${f.tel_client || ''}
-                            ${f.tel_client ? `<a href="https://wa.me/4${f.tel_client.replace(/\s+/g, '')}" target="_blank" onclick="event.stopPropagation();" class="inline-block transform hover:scale-110 transition-transform" title="WhatsApp">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.886.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.98zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.668.149-.198.297-.767.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                            </a>` : ''}
-                            ${f.judet_client ? ' | ' + f.judet_client : ''}
-                        </span>
-                    </td>
-                    <td class="p-4 border-r border-slate-300 text-xs font-bold text-slate-800">
-                        ${f.marca_model}<br>
-                        <span class="text-blue-600 font-black uppercase text-[10px]">${f.vin_produs}</span>
-                    </td>
-                    <td class="p-2 md:p-4 border-r border-slate-300 whitespace-nowrap">
-                        <span class="text-[8px] md:text-[9px] font-bold text-blue-900 bg-slate-200 px-1 py-1 rounded-md border border-slate-300 uppercase">${formatRelativ(f.updated_at)}</span>
-                    </td>
-                    <td class="p-4 border-r border-slate-300 text-[10px] font-black ${vch.color}">${vch.text}</td>
-                    <td class="p-2 md:p-4 border-r border-slate-300 whitespace-nowrap">
-                        <span class="px-1.5 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase text-white ${f.status === 'Finalizat' ? 'bg-green-600' : (f.status === 'Revenire' ? 'bg-blue-600' : 'bg-amber-500')}">${f.status}</span>
-                    </td>
-                    <td class="p-4 border-r border-slate-300 text-[9px] font-black text-slate-700 italic">${f.alocat_catre || ''}</td>
-                    <td class="p-4 font-black text-[10px] ${transportStyle}">${f.tip_transport || ''}</td>
-                </tr>`;
-            } else {
-                // Rand simplificat pentru useri magazin: fara Actualizat, Service, Transport
-                return `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors">
-                    <td class="p-4 border-r border-slate-300 font-black text-slate-400 text-xs">${globalNrCrt}</td>
-                    <td class="p-4 border-r border-slate-300 font-mono font-black text-blue-700 text-xs">${f.id}</td>
-                    <td class="p-4 border-r border-slate-300 font-black text-slate-900">
-                        ${f.nume_client}<br>
-                        <span class="text-blue-600 font-black uppercase text-[10px] inline-flex items-center gap-1">
-                            ${f.tel_client || ''}
-                            ${f.tel_client ? `<a href="https://wa.me/4${f.tel_client.replace(/\s+/g, '')}" target="_blank" onclick="event.stopPropagation();" class="inline-block transform hover:scale-110 transition-transform" title="WhatsApp">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.886.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.98zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.668.149-.198.297-.767.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                            </a>` : ''}
-                            ${f.judet_client ? ' | ' + f.judet_client : ''}
-                        </span>
-                    </td>
-                    <td class="p-4 border-r border-slate-300 text-xs font-bold text-slate-800">
-                        ${f.marca_model}<br>
-                        <span class="text-blue-600 font-black uppercase text-[10px]">${f.vin_produs}</span>
-                    </td>
-                    <td class="p-4 border-r border-slate-300 text-[10px] font-black ${vch.color}">${vch.text}</td>
-                    <td class="p-2 md:p-4 whitespace-nowrap">
-                        <span class="px-1.5 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase text-white ${f.status === 'Finalizat' ? 'bg-green-600' : (f.status === 'Revenire' ? 'bg-blue-600' : 'bg-amber-500')}">${f.status}</span>
-                    </td>
-                </tr>`;
-            }
+            return `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors">
+                <td class="p-4 border-r border-slate-300 font-black text-slate-400 text-xs">${globalNrCrt}</td>
+                <td class="p-4 border-r border-slate-300 font-mono font-black text-blue-700 text-xs">${f.id}</td>
+                <td class="p-4 border-r border-slate-300 font-black text-slate-900">
+                    ${f.nume_client}<br>
+                    <span class="text-blue-600 font-black uppercase text-[10px] inline-flex items-center gap-1">
+                        ${f.tel_client || ''}
+                        ${f.tel_client ? `<a href="https://wa.me/4${f.tel_client.replace(/\s+/g, '')}" target="_blank" onclick="event.stopPropagation();" class="inline-block transform hover:scale-110 transition-transform" title="WhatsApp">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.886.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.98zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.668.149-.198.297-.767.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        </a>` : ''}
+                        ${f.judet_client ? ' | ' + f.judet_client : ''}
+                    </span>
+                </td>
+                <td class="p-4 border-r border-slate-300 text-xs font-bold text-slate-800">
+                    ${f.marca_model}<br>
+                    <span class="text-blue-600 font-black uppercase text-[10px]">${f.vin_produs}</span>
+                </td>
+                <td class="p-4 border-r border-slate-300 text-[10px] font-black ${vch.color}">${vch.text}</td>
+                <td class="p-2 md:p-4 whitespace-nowrap">
+                    <span class="px-1.5 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase text-white ${f.status === 'Finalizat' ? 'bg-green-600' : (f.status === 'Revenire' ? 'bg-blue-600' : 'bg-amber-500')}">${f.status}</span>
+                </td>
+            </tr>`;
         }
 
-        function renderPagination(current, total, totalItems, totalDb) {
+        function renderPagination(current, total, totalItems) {
             let container = document.getElementById('pagination-bar');
             if (!container) {
                 const tableWrapper = document.querySelector('.bg-white.rounded-2xl.shadow-xl.overflow-x-auto');
@@ -844,12 +656,10 @@
                 pages.push(total);
             }
 
-            const filterInfo = (totalItems < totalDb) ? ` &nbsp;<span class="text-blue-600">(filtrate din ${totalDb} total)</span>` : '';
-
             container.className = 'flex flex-wrap items-center justify-between gap-3 mt-4 px-2 py-3 no-print';
             container.innerHTML = `
                 <span class="text-xs font-bold text-slate-500">
-                    Afișate <b>${start}–${end}</b> din <b>${totalItems}</b> fișe${filterInfo} &nbsp;|&nbsp; Pagina <b>${current}</b> din <b>${total}</b>
+                    Afișate <b>${start}–${end}</b> din <b>${totalItems}</b> fișe &nbsp;|&nbsp; Pagina <b>${current}</b> din <b>${total}</b>
                 </span>
                 <div class="flex flex-wrap gap-1">
                     <button onclick="loadFise(${current - 1})" ${current === 1 ? 'disabled' : ''}
@@ -859,7 +669,7 @@
                     ${pages.map(p => p === '...'
                 ? `<span class="px-2 py-1.5 text-xs text-slate-400 font-bold self-center">…</span>`
                 : `<button onclick="loadFise(${p})"
-                                class="px-3 py-1.5 rounded-lg text-xs font-black border-2 transition ${p === current
+                            class="px-3 py-1.5 rounded-lg text-xs font-black border-2 transition ${p === current
                     ? 'bg-blue-600 border-blue-600 text-white shadow'
                     : 'border-slate-300 text-slate-600 hover:bg-blue-50 hover:border-blue-300'
                 }">${p}</button>`
@@ -873,24 +683,16 @@
 
         function handleStatusChange() {
             currentStatusFilter = document.getElementById('status-filter').value;
-            currentPage = 1;
             loadFise(1);
         }
 
         function buildBaseQuery(forCount = false) {
             const q = currentSearchQuery.trim().toLowerCase();
-            const isAdmin = activeUser.rol === 'admin';
 
             let query = _supa.from('fise_cu_vechime')
                 .select(forCount ? '*' : '*', { count: 'exact', head: forCount })
-                .eq('is_deleted', false);
-
-            if (isAdmin) {
-                // Admin vede toate fișele
-            } else {
-                // Userul de magazin vede DOAR fișele create de magazinul lui (filtru pe coloana magazin)
-                query = query.eq('magazin', activeUser.service);
-            }
+                .eq('is_deleted', false)
+                .eq('magazin', activeUser.service);
 
             if (currentStatusFilter !== 'Toate') {
                 query = query.eq('status', currentStatusFilter);
@@ -915,18 +717,11 @@
 
         async function loadFise(page = 1) {
             if (activeUser.rol === 'none') {
-                document.getElementById('fise-rows').innerHTML = '<tr><td colspan="8" class="p-10 text-center font-black text-red-600 uppercase">Cont neactivat. Contactați administratorul.</td></tr>';
+                document.getElementById('fise-rows').innerHTML = '<tr><td colspan="6" class="p-10 text-center font-black text-red-600 uppercase">Cont neactivat. Contactați administratorul.</td></tr>';
                 return;
             }
 
             currentPage = page;
-            updateArchiveCounter();
-
-            if (activeUser.rol === 'admin') {
-                let totalQ = _supa.from('fise').select('*', { count: 'exact', head: true }).eq('is_deleted', false);
-                const { count: dbCount } = await totalQ;
-                totalFiseCount = dbCount || 0;
-            }
 
             const { count: filteredCount } = await buildBaseQuery(true);
             totalFilteredCount = filteredCount || 0;
@@ -949,8 +744,8 @@
             body.innerHTML = '';
 
             if (!data || data.length === 0) {
-                body.innerHTML = '<tr><td colspan="9" class="p-10 text-center font-black text-slate-400 italic">Nu există fișe.</td></tr>';
-                renderPagination(1, 1, 0, totalFiseCount);
+                body.innerHTML = '<tr><td colspan="6" class="p-10 text-center font-black text-slate-400 italic">Nu există fișe.</td></tr>';
+                renderPagination(1, 1, 0);
                 return;
             }
 
@@ -959,7 +754,7 @@
                 body.innerHTML += buildRow(f, globalNrCrt);
             });
 
-            renderPagination(page, totalPages, totalFilteredCount, totalFiseCount);
+            renderPagination(page, totalPages, totalFilteredCount);
         }
 
         // -----------------------------------------------
@@ -998,11 +793,8 @@
 
         document.getElementById('form-fisa-noua').onsubmit = async (e) => {
             e.preventDefault();
-            const editId = document.getElementById('edit-fisa-id').value;
             let finalCategorie = document.getElementById('p-cat').value;
             if (finalCategorie === 'Alta') finalCategorie = document.getElementById('p-cat-alt').value;
-
-            const isAdmin = activeUser.rol === 'admin';
 
             const fisa = {
                 nume_client: document.getElementById('c-nume').value,
@@ -1021,103 +813,26 @@
                 reclamatie_client: document.getElementById('p-rec').value || ""
             };
 
-            // Data predare fizica: doar admin o poate seta
-            if (isAdmin) {
-                fisa.data_preluare_fizica = document.getElementById('p-dprel').value || null;
-            }
-
-            let result;
-
-            if (editId) {
-                result = await _supa.from('fise').update(fisa).eq('id', editId);
-            } else {
-                const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, '');
-                fisa.id = dateStr + Math.floor(Math.random() * 100).toString().padStart(3, '0');
-                fisa.status = 'În lucru';
-                fisa.alocat_catre = 'Nealocat';
-                // Salvăm magazinul de provenienta al fiselor create de useri non-admin
-                fisa.magazin = activeUser.service;
-                result = await _supa.from('fise').insert([fisa]);
-            }
+            const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+            fisa.id = dateStr + Math.floor(Math.random() * 100).toString().padStart(3, '0');
+            fisa.status = 'În lucru';
+            fisa.alocat_catre = 'Nealocat';
+            fisa.magazin = activeUser.service;
+            const result = await _supa.from('fise').insert([fisa]);
 
             if (result.error) {
                 alert("Eroare la salvare: " + result.error.message);
             } else {
                 alert("Fișa a fost salvată cu succes!");
-                cancelEdit();
+                document.getElementById('form-fisa-noua').reset();
+                document.getElementById('p-cat-alt').classList.add('hidden');
+                document.getElementById('p-cat').value = "";
+                renderModelInput();
+                document.getElementById('c-data-auto').value = getRoTime();
                 loadFise();
                 switchTab('tab-list');
-                document.getElementById('form-fisa-noua').reset();
             }
         };
-
-        function startEdit() {
-            const f = currentFisa;
-            document.getElementById('edit-fisa-id').value = f.id;
-            document.getElementById('edit-id-display').innerText = f.id;
-            document.getElementById('edit-indicator').classList.remove('hidden');
-            document.getElementById('submit-btn').innerText = "Actualizează Fișa";
-            document.getElementById('c-nume').value = f.nume_client;
-            document.getElementById('c-tel').value = f.tel_client || '';
-            document.getElementById('c-email').value = f.email_client || '';
-            document.getElementById('c-adr').value = f.adresa_client || '';
-            document.getElementById('c-judet').value = f.judet_client || '';
-            document.getElementById('c-data-auto').value = f.created_at?.slice(0, 16);
-            const categoriiStandard = ["Bicicleta electrica", "Tricicleta electrica", "Scuter electric", "Cvadraciclu electric"];
-            if (categoriiStandard.includes(f.categorie)) {
-                document.getElementById('p-cat').value = f.categorie;
-                document.getElementById('p-cat-alt').classList.add('hidden');
-            } else {
-                document.getElementById('p-cat').value = 'Alta';
-                document.getElementById('p-cat-alt').classList.remove('hidden');
-                document.getElementById('p-cat-alt').value = f.categorie;
-            }
-            document.getElementById('p-vin').value = f.vin_produs;
-            document.getElementById('p-mod').value = f.marca_model;
-            document.getElementById('p-fact').value = f.nr_factura || '';
-            document.getElementById('p-dfact').value = f.data_factura || '';
-            document.getElementById('p-gar').value = f.tip_garantie;
-            document.getElementById('p-obs-produs').value = f.obs_produs || '';
-            if (document.getElementById('p-dprel')) {
-                document.getElementById('p-dprel').value = f.data_preluare_fizica || '';
-            }
-            document.getElementById('p-rec').value = f.reclamatie_client;
-            closeModal();
-            switchTab('tab-add');
-        }
-
-        function cancelEdit() {
-            document.getElementById('form-fisa-noua').reset();
-            document.getElementById('edit-fisa-id').value = '';
-            document.getElementById('edit-indicator').classList.add('hidden');
-            document.getElementById('p-cat-alt').classList.add('hidden');
-            document.getElementById('submit-btn').innerText = "Salvează Fișa";
-            document.getElementById('c-data-auto').value = getRoTime();
-            document.getElementById('p-cat').value = "";
-            renderModelInput();
-        }
-
-        async function deleteFisa() {
-            if (confirm(`Sigur doriți să mutați fișa ${currentFisa.id} în arhiva de ștergeri?`)) {
-                const { error } = await _supa
-                    .from('fise')
-                    .update({
-                        is_deleted: true,
-                        deleted_at: new Date().toISOString(),
-                        deleted_by_username: activeUser.username,
-                        deleted_by_name: activeUser.nume_complet
-                    })
-                    .eq('id', currentFisa.id);
-
-                if (error) {
-                    alert("Eroare la ștergere: " + error.message);
-                } else {
-                    alert("Fișa a fost arhivată cu succes.");
-                    closeModal();
-                    loadFise();
-                }
-            }
-        }
 
         // -----------------------------------------------
         // DESCHIDERE MODAL FISA
@@ -1125,20 +840,8 @@
         function openFisa(f) {
             currentFisa = f;
             document.getElementById('modal-view').classList.remove('hidden');
-            const isAdmin = activeUser.rol === 'admin';
-
-            // Editează și Șterge: DOAR admin
-            document.getElementById('admin-edit-btn').classList.toggle('hidden', !isAdmin);
-            document.getElementById('admin-delete-btn').classList.toggle('hidden', !isAdmin);
 
             const vch = calcVechime(f);
-            const canEditReport = (isAdmin || (activeUser.service === f.alocat_catre && f.status === 'În lucru'));
-            const isPropriuType = (f.alocat_catre === 'Propriu' || f.alocat_catre === 'SERVICE PROPRIU 1' || f.alocat_catre === 'SERVICE PROPRIU 2' || f.alocat_catre === 'RIDICARE');
-
-            // Sectiunea Raport Tehnic si Alocare sunt vizibile doar daca isAdmin sau canEditReport
-            // Userul de magazin vede fisele dar NU vede zona de Alocare/Status/Transport si Raport Tehnic
-            const showAdminSection = isAdmin;
-            const showRaportSection = isAdmin || (activeUser.service === f.alocat_catre && f.status === 'În lucru');
 
             document.getElementById('v-render-area').innerHTML = `
                 <div class="flex-grow">
@@ -1175,29 +878,12 @@
                             <p><b class="font-black">EMITENT/FACTURĂ:</b> ${f.nr_factura || '-'} / ${f.data_factura ? f.data_factura.split('-').reverse().join('-') : '-'}</p>
                             <p><b>GARANȚIE:</b> ${f.tip_garantie}</p>
                             <p><b class="font-black">OBSERVAȚII:</b> ${f.obs_produs || '-'}</p>
-                            ${isAdmin ? `<p><b class="font-black text-red-700">DATA PREDĂRII FIZICE:</b> ${f.data_preluare_fizica ? f.data_preluare_fizica.split('-').reverse().join('-') : '-'}</p>` : ''}
                         </div>
                     </div>
                     <div class="bg-slate-100 p-2 md:p-3 border-2 border-slate-200 italic mb-3 text-[11px] md:text-[13px] text-slate-900 rounded-lg">
                         <h4 class="font-black uppercase text-[9px] md:text-[11px] mb-2 border-b-2 border-slate-300 pb-1">3. Reclamație Client:</h4>
                         <div class="font-bold leading-relaxed whitespace-pre-wrap">${f.reclamatie_client}</div>
                     </div>
-
-                    ${isAdmin ? `
-                    <div class="border-t-2 md:border-t-4 border-slate-900 pt-4 md:pt-6">
-                        <h4 class="font-black bg-slate-900 text-white px-3 py-1 text-[9px] md:text-[11px] inline-block mb-1 uppercase tracking-widest">Raport Tehnic Service</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6 text-[10px] md:text-[12px] font-black mb-4 border-b pb-2 border-slate-100">
-                            <p>ALOCAT: <span class="text-blue-700">${f.alocat_catre}</span></p>
-                            <p>TEHNICIAN: <span class="text-blue-700">${f.tehnician || '-'}</span></p>
-                            ${isPropriuType ?
-                        `<p>KM/ORE: <span class="text-blue-700">${f.km || '-'}/${f.ore || '-'}</span></p><div></div>` :
-                        `<p>COST: <span class="text-blue-700">${f.cost || '-'}</span></p>
-                                 <p>FACTURĂ: <span class="text-blue-700">${f.emitent_factura_service || '-'}</span></p>`
-                    }
-                        </div>
-                        <div class="p-2 md:p-4 border-2 border-slate-100 bg-blue-50/30 text-[11px] md:text-[13px] font-bold text-slate-900 min-h-[40px] whitespace-pre-line rounded-xl">${f.raport_reparatie ? f.raport_reparatie.trim() : 'Diagnosticare în curs...'}</div>
-                    </div>
-                    ` : ''}
 
                     <div class="mt-4 flex justify-between px-4 md:px-10 text-[9px] md:text-[11px] font-black uppercase text-slate-900">
                         <div class="flex flex-col">
@@ -1219,136 +905,7 @@
                     <div class="mt-auto pt-4 text-[11px] leading-tight text-slate-400 italic border-t border-slate-100">
                         <p class="mb-2">Notă: Datele cu caracter personal din acest document sunt prelucrate în conformitate cu prevederile Regulamentului (UE) 2016/679 (GDPR). Prin semnarea/transmiterea acestui document, vă exprimați acordul pentru prelucrarea datelor în scopul prestării serviciilor</p>
                     </div>
-
-                    <!-- Sectiunea Alocare+Raport: NUMAI pentru admin, in modal, no-print -->
-                    <div class="mt-8 no-print pt-4 border-t-2 border-dashed border-slate-300 space-y-4">
-                        ${isAdmin ? `
-                        <div class="bg-slate-200 p-4 rounded-xl flex flex-col gap-3 shadow-inner">
-                            <span class="text-[10px] font-black uppercase text-slate-800">Alocare, Status & Transport (ADMIN):</span>
-                            <div class="flex flex-wrap gap-2">
-                                <select id="sel-aloca" class="flex-grow p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white text-slate-900">
-                                    <option value="${f.alocat_catre}">${f.alocat_catre}</option>
-                                    <option value="Propriu">1. Service Propriu</option>
-                                    <option value="SERVICE PROPRIU 1">2. SERVICE PROPRIU 1</option>
-                                    <option value="SERVICE PROPRIU 2">3. SERVICE PROPRIU 2</option>
-                                    <option value="RIDICARE">4. RIDICARE</option>
-                                    <option value="BUXI PROFESIONAL">5. BUXI PROFESIONAL</option>
-                                    <option value="MIXX MOTION">6. MIXX MOTION</option>
-                                    <option value="PGC GRAND TOTAL">7. PGC GRAND TOTAL</option>
-                                    <option value="TRANDAFIR GROSU PFA">8. TRANDAFIR GROSU PFA</option>
-                                    <option value="TRUST AGROSERV">9. TRUST AGROSERV</option>
-                                </select>
-                                <select id="sel-status-admin" class="p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white text-slate-900">
-                                    <option value="În lucru" ${f.status === 'În lucru' ? 'selected' : ''}>În lucru</option>
-                                    <option value="Finalizat" ${f.status === 'Finalizat' ? 'selected' : ''}>Finalizat</option>
-                                    <option value="Revenire" ${f.status === 'Revenire' ? 'selected' : ''}>Revenire</option>
-                                </select>
-                                <select id="sel-transport-admin" class="p-2 border-2 border-slate-300 rounded-lg font-black text-[10px] bg-white text-slate-900">
-                                    <option value="">Fără Transport</option>
-                                    <option value="INTRARE" ${f.tip_transport === 'INTRARE' ? 'selected' : ''}>INTRARE</option>
-                                    <option value="IESIRE" ${f.tip_transport === 'IESIRE' ? 'selected' : ''}>IEȘIRE</option>
-                                </select>
-                            </div>
-                            <div class="flex justify-center w-full mt-4">
-                                <button onclick="saveAlocare()" class="px-8 bg-blue-600 text-white py-3 rounded-lg font-black text-[10px] uppercase active:scale-95">Actualizează</button>
-                            </div>
-                        </div>
-                        <div class="bg-blue-700 p-4 md:p-8 rounded-2xl text-white shadow-2xl">
-                            <h4 class="font-black uppercase mb-4 italic text-sm md:text-lg">Raport Tehnic - MOD ADMIN</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4 text-slate-900">
-                                <div>
-                                    <label class="text-[9px] font-black text-white uppercase ml-1">Tip Transport</label>
-                                    <select id="s-transport" class="w-full p-3 rounded-lg text-xs font-bold border-2 text-slate-900">
-                                        <option value="">Nespecificat</option>
-                                        <option value="INTRARE" ${f.tip_transport === 'INTRARE' ? 'selected' : ''}>INTRARE (ROȘU)</option>
-                                        <option value="IESIRE" ${f.tip_transport === 'IESIRE' ? 'selected' : ''}>IESIRE (VERDE)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="text-[9px] font-black text-white uppercase ml-1">Tehnician</label>
-                                    <input type="text" id="s-teh" value="${f.tehnician || ''}" placeholder="Tehnician" class="w-full p-3 rounded-lg text-xs font-bold border-2">
-                                </div>
-                                ${isPropriuType ? `
-                                <div>
-                                    <label class="text-[9px] font-black text-white uppercase ml-1">Km.</label>
-                                    <input type="text" id="s-km" value="${f.km || ''}" placeholder="Km" class="w-full p-3 rounded-lg text-xs font-bold border-2">
-                                </div>
-                                <div>
-                                    <label class="text-[9px] font-black text-white uppercase ml-1">Ore</label>
-                                    <input type="text" id="s-ore" value="${f.ore || ''}" placeholder="Ore" class="w-full p-3 rounded-lg text-xs font-bold border-2">
-                                </div>
-                                ` : `
-                                <div>
-                                    <label class="text-[9px] font-black text-white uppercase ml-1">Cost</label>
-                                    <input type="text" id="s-cost" value="${f.cost || ''}" placeholder="Cost" class="w-full p-3 rounded-lg text-xs font-bold border-2">
-                                </div>
-                                <div>
-                                    <label class="text-[9px] font-black text-white uppercase ml-1">Factură</label>
-                                    <input type="text" id="s-emi" value="${f.emitent_factura_service || ''}" placeholder="Factură" class="w-full p-3 rounded-lg text-xs font-bold border-2">
-                                </div>
-                                `}
-                            </div>
-                            <div>
-                                <label class="text-[9px] font-black text-white uppercase ml-1">Raport Reparații / Observații</label>
-                                <textarea id="s-rap" placeholder="Descrieți lucrarea..."
-                                    class="w-full p-3 rounded-xl text-slate-900 text-xs font-bold mb-4 h-24 border-2">${f.raport_reparatie || ''}</textarea>
-                            </div>
-                            <div class="flex flex-col md:flex-row gap-2">
-                                <button onclick="saveRaport(false)" class="bg-slate-800 py-3 md:py-4 rounded-xl font-black uppercase text-[10px] flex-grow">Salvează Ciornă</button>
-                                <button onclick="saveRaport(true)" class="bg-green-500 py-3 md:py-4 rounded-xl font-black uppercase text-[10px] flex-grow shadow-lg active:scale-95">Finalizează Lucrarea</button>
-                            </div>
-                        </div>
-                        ` : ''}
-                    </div>
                 </div>`;
-        }
-
-        async function saveAlocare() {
-            const dest = document.getElementById('sel-aloca').value;
-            const stat = document.getElementById('sel-status-admin').value;
-            const trans = document.getElementById('sel-transport-admin').value;
-            const esteStatusFinal = (stat === 'Finalizat' || stat === 'Refuzat');
-            const updateData = {
-                alocat_catre: dest,
-                status: stat,
-                tip_transport: trans,
-                updated_at: new Date().toISOString(),
-                data_finalizare: esteStatusFinal ? new Date().toISOString() : null
-            };
-            const { error } = await _supa.from('fise').update(updateData).eq('id', currentFisa.id);
-            if (!error) {
-                closeModal();
-                await loadFise();
-            } else {
-                console.error("Eroare la actualizarea alocării:", error);
-                alert("A apărut o eroare la salvarea modificărilor.");
-            }
-        }
-
-        async function saveRaport(isFinal) {
-            if (!isFinal) {
-                const confirmare = confirm("Sigur dorești să salvezi modificările?");
-                if (!confirmare) return;
-            }
-            const noulStatus = isFinal ? 'Finalizat' : 'În lucru';
-            const upd = {
-                tehnician: document.getElementById('s-teh').value,
-                raport_reparatie: document.getElementById('s-rap').value,
-                status: noulStatus,
-                data_finalizare: isFinal ? new Date().toISOString() : null
-            };
-            if (document.getElementById('s-transport')) upd.tip_transport = document.getElementById('s-transport').value;
-            if (document.getElementById('s-km')) upd.km = document.getElementById('s-km').value;
-            if (document.getElementById('s-ore')) upd.ore = document.getElementById('s-ore').value;
-            if (document.getElementById('s-cost')) upd.cost = document.getElementById('s-cost').value;
-            if (document.getElementById('s-emi')) upd.emitent_factura_service = document.getElementById('s-emi').value;
-            const { error } = await _supa.from('fise').update(upd).eq('id', currentFisa.id);
-            if (error) {
-                alert("Eroare la salvare!");
-            } else {
-                closeModal();
-                loadFise();
-            }
         }
 
         // -----------------------------------------------
@@ -1359,15 +916,12 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('#main-nav button').forEach(b => b.classList.remove('border-b-4', 'border-blue-600', 'text-blue-600'));
 
-            let btnId = (id === 'tab-add') ? 'btn-add' : ((id === 'tab-users') ? 'btn-users' : 'btn-list');
+            let btnId = (id === 'tab-add') ? 'btn-add' : 'btn-list';
 
             if (id === 'tab-add') {
-                const editId = document.getElementById('edit-fisa-id').value;
-                if (!editId) cancelEdit();
                 document.getElementById('c-data-auto').value = getRoTime();
             }
 
-            if (id === 'tab-users') loadUsers();
             document.getElementById(btnId).classList.add('border-b-4', 'border-blue-600', 'text-blue-600');
             window.scrollTo(0, 0);
         }
@@ -1381,7 +935,7 @@
         }
 
         // -----------------------------------------------
-        // EXPORT EXCEL (doar admin)
+        // EXPORT EXCEL
         // -----------------------------------------------
         function toggleExportDates() {
             const type = document.getElementById('export-type').value;
@@ -1392,24 +946,30 @@
             const type = document.getElementById('export-type').value;
             let dataToExport = [];
 
-            if (type === 'current') {
+            if (type === 'all') {
+                const { data, error } = await _supa.from('fise').select('*')
+                    .eq('is_deleted', false)
+                    .eq('magazin', activeUser.service)
+                    .order('created_at', { ascending: true });
+                if (error || !data.length) return alert("Nu există date de exportat!");
+                dataToExport = data;
+            } else if (type === 'current') {
                 if (totalFilteredCount === 0) return alert("Nu există date vizibile de exportat!");
-                let exportQuery = buildBaseQuery(false)
+                const { data: filteredAll, error: errF } = await buildBaseQuery(false)
                     .order('updated_at', { ascending: false })
                     .range(0, totalFilteredCount - 1);
-                const { data: filteredAll, error: errF } = await exportQuery;
                 if (errF || !filteredAll) return alert("Eroare la export: " + (errF?.message || 'necunoscută'));
                 dataToExport = filteredAll;
-            } else {
-                let query = _supa.from('fise').select('*').eq('is_deleted', false).order('created_at', { ascending: true });
-                if (activeUser.rol !== 'admin') query = query.eq('magazin', activeUser.service);
-                if (type === 'period') {
-                    const start = document.getElementById('exp-start').value;
-                    const end = document.getElementById('exp-end').value;
-                    if (!start || !end) return alert("Selectați perioada!");
-                    query = query.gte('created_at', start + "T00:00").lte('created_at', end + "T23:59");
-                }
-                const { data, error } = await query;
+            } else if (type === 'period') {
+                const start = document.getElementById('exp-start').value;
+                const end = document.getElementById('exp-end').value;
+                if (!start || !end) return alert("Selectați perioada!");
+                const { data, error } = await _supa.from('fise').select('*')
+                    .eq('is_deleted', false)
+                    .eq('magazin', activeUser.service)
+                    .gte('created_at', start + "T00:00")
+                    .lte('created_at', end + "T23:59")
+                    .order('created_at', { ascending: true });
                 if (error || !data.length) return alert("Nu există date de exportat!");
                 dataToExport = data;
             }
@@ -1435,7 +995,6 @@
                 "Data Factura": f.data_factura ? f.data_factura.split('-').reverse().join('-') : '',
                 "Tip Garantie": f.tip_garantie,
                 "Observatii Produs": f.obs_produs,
-                "Data Preluare Fizica": f.data_preluare_fizica ? f.data_preluare_fizica.split('-').reverse().join('-') : '',
                 "Reclamatie Client": f.reclamatie_client,
                 "Status": f.status
             }));
@@ -1443,76 +1002,7 @@
             const worksheet = XLSX.utils.json_to_sheet(rows);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Fise Service");
-            XLSX.writeFile(workbook, `Export_Geeli_Magazine_${new Date().toISOString().slice(0, 10)}.xlsx`);
-        }
-
-        // -----------------------------------------------
-        // ARHIVA (doar admin)
-        // -----------------------------------------------
-        async function updateArchiveCounter() {
-            if (activeUser.rol !== 'admin') return;
-            const { count, error } = await _supa.from('fise').select('*', { count: 'exact', head: true }).eq('is_deleted', true);
-            if (!error) {
-                const display = document.getElementById('archive-count');
-                display.innerText = count;
-                if (count > 0) {
-                    display.classList.remove('text-green-600');
-                    display.classList.add('text-red-600');
-                } else {
-                    display.classList.remove('text-red-600');
-                    display.classList.add('text-green-600');
-                }
-            }
-        }
-
-        async function openArchiveModal() {
-            if (activeUser.rol !== 'admin') return;
-            const { data, error } = await _supa.from('fise')
-                .select('id, deleted_at, deleted_by_name, deleted_by_username')
-                .eq('is_deleted', true)
-                .order('deleted_at', { ascending: false });
-            if (error) { alert("Eroare la încărcarea arhivei: " + error.message); return; }
-            const body = document.getElementById('archive-rows');
-            body.innerHTML = '';
-            if (data.length === 0) {
-                body.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-400 italic">Nu există fișe în arhivă.</td></tr>';
-            } else {
-                data.forEach(f => {
-                    const dataSters = f.deleted_at ? new Date(f.deleted_at).toLocaleString('ro-RO') : '-';
-                    body.innerHTML += `
-                    <tr class="hover:bg-red-50 transition-colors border-b border-slate-100">
-                        <td class="p-3 font-mono text-blue-700">${f.id}</td>
-                        <td class="p-3">${dataSters}</td>
-                        <td class="p-3">${f.deleted_by_name || '-'}</td>
-                        <td class="p-3 text-slate-500 uppercase">${f.deleted_by_username || '-'}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="restoreFisa(${f.id})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-[10px] font-black uppercase transition shadow-sm">Restabilire</button>
-                        </td>
-                    </tr>`;
-                });
-            }
-            document.getElementById('modal-archive').classList.remove('hidden');
-        }
-
-        function closeArchiveModal() { document.getElementById('modal-archive').classList.add('hidden'); }
-
-        async function restoreFisa(id) {
-            if (!confirm(`Sigur doriți să restabiliți fișa cu ID-ul ${id}?`)) return;
-            try {
-                const { error } = await _supa.from('fise').update({
-                    is_deleted: false,
-                    deleted_at: null,
-                    deleted_by_name: null,
-                    deleted_by_username: null
-                }).eq('id', id);
-                if (error) throw error;
-                alert("Fișa a fost restabilită cu succes!");
-                await updateArchiveCounter();
-                await openArchiveModal();
-                if (typeof loadFise === "function") await loadFise();
-            } catch (err) {
-                alert("Eroare la restabilire: " + err.message);
-            }
+            XLSX.writeFile(workbook, `Export_Geeli_${activeUser.service}_${new Date().toISOString().slice(0, 10)}.xlsx`);
         }
 
         // -----------------------------------------------
