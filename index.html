@@ -257,15 +257,6 @@
                         </svg>
                         Export Excel
                     </button>
-                    <div id="archive-counter-container"
-                        class="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-lg border border-slate-200 ml-auto">
-                        <div class="flex flex-col items-center">
-                            <span class="text-[9px] font-black uppercase text-slate-500">Fișe arhivate</span>
-                            <span id="archive-count" class="text-sm font-black text-green-600 leading-none">0</span>
-                        </div>
-                        <button onclick="openArchiveModal()"
-                            class="bg-slate-800 text-white px-2 py-1 rounded text-[9px] font-black hover:bg-slate-700 transition uppercase">Info</button>
-                    </div>
                 </div>
 
                 <div class="flex gap-2 mb-6 items-center">
@@ -619,8 +610,9 @@
                 // Tab Utilizatori: doar admin
                 if (isAdmin) {
                     document.getElementById('btn-users').classList.remove('hidden');
-                    document.getElementById('admin-export-area').classList.remove('hidden');
                 }
+                document.getElementById('admin-export-area').classList.remove('hidden');
+
 
                 // Campul "Data Predarii Fizice": ascuns pentru useri magazin
                 if (!isAdmin) {
@@ -911,7 +903,8 @@
                     `id.ilike.%${q}%`,
                     `judet_client.ilike.%${q}%`,
                     `email_client.ilike.%${q}%`,
-                    `status.ilike.%${q}%`
+                    `status.ilike.%${q}%`,
+                    `vechime_status.ilike.%${q}%`
                 ].join(','));
             }
 
@@ -1442,12 +1435,7 @@
                 "Observatii Produs": f.obs_produs,
                 "Data Preluare Fizica": f.data_preluare_fizica ? f.data_preluare_fizica.split('-').reverse().join('-') : '',
                 "Reclamatie Client": f.reclamatie_client,
-                "Status": f.status,
-                "Alocat Catre": f.alocat_catre,
-                "Tehnician": f.tehnician,
-                "KM/Ore": f.km || '',
-                "Cost": f.cost || '',
-                "Raport Tehnic": f.raport_reparatie
+                "Status": f.status
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(rows);
