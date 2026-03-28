@@ -650,6 +650,7 @@
             } else {
                 // Useri magazin: fara Actualizat, Service, Transport
                 hRow.innerHTML = `
+                    <th class="p-4 border-r border-slate-400">#</th>
                     <th class="p-4 border-r border-slate-400">ID Fișă</th>
                     <th class="p-4 border-r border-slate-400">Client / Telefon / Județ</th>
                     <th class="p-4 border-r border-slate-400">Produs / VIN</th>
@@ -794,6 +795,7 @@
             } else {
                 // Rand simplificat pentru useri magazin: fara Actualizat, Service, Transport
                 return `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <td class="p-4 border-r border-slate-300 font-black text-slate-400 text-xs">${globalNrCrt}</td>
                     <td class="p-4 border-r border-slate-300 font-mono font-black text-blue-700 text-xs">${f.id}</td>
                     <td class="p-4 border-r border-slate-300 font-black text-slate-900">
                         ${f.nume_client}<br>
