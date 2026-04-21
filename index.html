@@ -361,6 +361,9 @@
                     Client / Telefon / Județ
                   </th>
                   <th class="p-4 border-r border-slate-400">Produs / VIN</th>
+                  <th class="p-4 border-r border-slate-400 text-center">
+                    Factură
+                  </th>
                   <th class="p-4 border-r border-slate-400">Vechime</th>
                   <th class="p-4">Status</th>
                 </tr>
@@ -818,7 +821,8 @@
 
       function buildRow(f, globalNrCrt) {
         const vch = calcVechime(f);
-        return `<tr onclick='openFisa(${JSON.stringify(f)})' class="border-b border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors">
+        const areDeleteBtn = !f.data_preluare_fizica;
+        return `<tr onclick='if(!event.target.closest(".factura-btn")) openFisa(${JSON.stringify(f)})' class="border-b border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors">
                 <td class="p-4 border-r border-slate-300 font-black text-slate-400 text-xs">${globalNrCrt}</td>
                 <td class="p-4 border-r border-slate-300 font-mono font-black text-blue-700 text-xs">${f.id}</td>
                 <td class="p-4 border-r border-slate-300 font-black text-slate-900">
@@ -838,6 +842,43 @@
                 <td class="p-4 border-r border-slate-300 text-xs font-bold text-slate-800">
                     ${f.marca_model}<br>
                     <span class="text-blue-600 font-black uppercase text-[10px]">${f.vin_produs}</span>
+                </td>
+                <td class="p-2 border-r border-slate-300 text-center align-middle" onclick="event.stopPropagation()">
+                    <div class="flex items-center justify-center gap-1">
+                        ${
+                          areDeleteBtn
+                            ? `<button
+                            type="button"
+                            class="factura-btn flex items-center justify-center bg-slate-600 hover:bg-blue-700 text-white rounded-lg transition active:scale-95"
+                            style="width:28px;height:28px;padding:0;flex-shrink:0;"
+                            title="Adaugă / Înlocuiește factură"
+                            onclick="triggerFacturaUploadRow('${f.id}', this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </button>`
+                            : ""
+                        }
+                        <button
+                            type="button"
+                            class="factura-btn flex items-center justify-center rounded-lg transition active:scale-95 ${f.factura_path ? "bg-slate-600 hover:bg-blue-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}"
+                            style="width:28px;height:28px;padding:0;flex-shrink:0;"
+                            title="${f.factura_path ? "Vizualizează factura" : "Nicio factură atașată"}"
+                            ${f.factura_path ? `onclick="viewFacturaRow('${f.factura_path}')"` : "disabled"}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </button>
+                        ${
+                          areDeleteBtn
+                            ? `<button
+                            type="button"
+                            class="factura-btn flex items-center justify-center rounded-lg transition active:scale-95 ${f.factura_path ? "bg-red-600 hover:bg-red-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}"
+                            style="width:28px;height:28px;padding:0;flex-shrink:0;"
+                            title="${f.factura_path ? "Șterge factura" : "Nicio factură atașată"}"
+                            ${f.factura_path ? `onclick="deleteFacturaRow('${f.id}', '${f.factura_path}', this)"` : "disabled"}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        </button>`
+                            : ""
+                        }
+                        <input type="file" accept="image/*,application/pdf" class="hidden factura-row-input" onchange="handleFacturaRowUpload(event, '${f.id}', this)">
+                    </div>
                 </td>
                 <td class="p-4 border-r border-slate-300 text-[10px] font-black ${vch.color}">${vch.text}</td>
                 <td class="p-2 md:p-4 whitespace-nowrap">
@@ -1381,6 +1422,178 @@
         const modWrapper = document.getElementById("p-mod-wrapper");
         modWrapper.innerHTML = `<input type="text" id="p-mod" placeholder="Introduceți Marcă / Model" class="w-full p-3 border-2 border-slate-200 rounded-lg font-semibold text-sm">`;
       }
+
+      // ── FACTURA STORAGE ──────────────────────────────────────────────────
+
+      function triggerFacturaUploadRow(fisaId, btn) {
+        const input = btn.closest("td").querySelector(".factura-row-input");
+        if (input) input.click();
+      }
+
+      function viewFacturaRow(facturaPath) {
+        if (!facturaPath) return;
+        const { data } = _supa.storage
+          .from("facturi")
+          .getPublicUrl(facturaPath);
+        if (data && data.publicUrl) {
+          window.open(data.publicUrl, "_blank");
+        } else {
+          alert("Nu s-a putut genera URL-ul pentru factură.");
+        }
+      }
+
+      async function handleFacturaRowUpload(event, fisaId, inputEl) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        const allowed = [
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+          "application/pdf",
+        ];
+        if (!allowed.includes(file.type)) {
+          alert(
+            "Tip fișier neacceptat. Folosiți imagine (JPG, PNG, WEBP) sau PDF.",
+          );
+          inputEl.value = "";
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          alert(
+            "Fișierul este prea mare. Dimensiunea maximă acceptată este 10 MB.",
+          );
+          inputEl.value = "";
+          return;
+        }
+
+        const ext = file.name.split(".").pop().toLowerCase();
+        const storagePath = fisaId + "/factura." + ext;
+
+        // Șterge fișierul vechi dacă există
+        const { data: existing } = await _supa
+          .from("fise")
+          .select("factura_path")
+          .eq("id", fisaId)
+          .maybeSingle();
+        if (existing && existing.factura_path) {
+          await _supa.storage.from("facturi").remove([existing.factura_path]);
+        }
+
+        // Animație pe butonul +
+        const addBtn = inputEl
+          .closest("td")
+          .querySelector("button:first-of-type");
+        if (addBtn) {
+          addBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>`;
+          addBtn.classList.add("animate-spin");
+        }
+
+        const { error: uploadError } = await _supa.storage
+          .from("facturi")
+          .upload(storagePath, file, { upsert: true, contentType: file.type });
+
+        if (uploadError) {
+          if (addBtn) {
+            addBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`;
+            addBtn.classList.remove("animate-spin");
+          }
+          inputEl.value = "";
+          alert("Eroare la încărcare: " + uploadError.message);
+          return;
+        }
+
+        const { error: dbError } = await _supa
+          .from("fise")
+          .update({ factura_path: storagePath })
+          .eq("id", fisaId);
+
+        if (dbError) {
+          alert(
+            "Fișierul a fost încărcat dar nu s-a putut salva calea în baza de date: " +
+              dbError.message,
+          );
+        } else {
+          // Actualizează butonul 👁 și butonul 🗑 direct în DOM
+          const td = inputEl.closest("td");
+          const btns = td.querySelectorAll("button");
+          const viewBtn = btns[1];
+          const delBtn = btns[2] || null;
+          if (viewBtn) {
+            viewBtn.disabled = false;
+            viewBtn.className =
+              "factura-btn flex items-center justify-center bg-slate-600 hover:bg-blue-700 text-white cursor-pointer rounded-lg transition active:scale-95";
+            viewBtn.title = "Vizualizează factura";
+            viewBtn.setAttribute("onclick", `viewFacturaRow('${storagePath}')`);
+          }
+          if (delBtn) {
+            delBtn.disabled = false;
+            delBtn.className =
+              "factura-btn flex items-center justify-center bg-red-600 hover:bg-red-700 text-white cursor-pointer rounded-lg transition active:scale-95";
+            delBtn.title = "Șterge factura";
+            delBtn.setAttribute(
+              "onclick",
+              `deleteFacturaRow('${fisaId}', '${storagePath}', this)`,
+            );
+          }
+          if (addBtn) {
+            addBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`;
+            addBtn.classList.remove("animate-spin");
+          }
+          if (currentFisa && currentFisa.id === fisaId) {
+            currentFisa.factura_path = storagePath;
+          }
+        }
+        inputEl.value = "";
+      }
+
+      async function deleteFacturaRow(fisaId, facturaPath, btn) {
+        if (!facturaPath) return;
+        if (
+          !confirm(
+            "Sigur doriți să ștergeți factura atașată fișei " + fisaId + "?",
+          )
+        )
+          return;
+
+        await _supa.storage.from("facturi").remove([facturaPath]);
+        const { error } = await _supa
+          .from("fise")
+          .update({ factura_path: null })
+          .eq("id", fisaId);
+
+        if (error) {
+          alert("Eroare la ștergerea facturii: " + error.message);
+          return;
+        }
+
+        if (currentFisa && currentFisa.id === fisaId) {
+          currentFisa.factura_path = null;
+        }
+
+        // Dezactivează butonul 👁 și butonul 🗑 în DOM
+        const td = btn.closest("td");
+        const btns = td.querySelectorAll("button");
+        const viewBtn = btns[1];
+        const delBtn = btns[2] || null;
+        if (viewBtn) {
+          viewBtn.disabled = true;
+          viewBtn.className =
+            "factura-btn flex items-center justify-center bg-slate-200 text-slate-400 cursor-not-allowed rounded-lg transition active:scale-95";
+          viewBtn.title = "Nicio factură atașată";
+          viewBtn.removeAttribute("onclick");
+        }
+        if (delBtn) {
+          delBtn.disabled = true;
+          delBtn.className =
+            "factura-btn flex items-center justify-center bg-slate-200 text-slate-400 cursor-not-allowed rounded-lg transition active:scale-95";
+          delBtn.title = "Nicio factură atașată";
+          delBtn.removeAttribute("onclick");
+        }
+      }
+
+      // ── END FACTURA STORAGE ──────────────────────────────────────────────
     </script>
   </body>
 </html>
