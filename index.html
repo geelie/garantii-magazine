@@ -588,6 +588,20 @@
                 <div>
                   <label
                     class="text-[9px] font-black text-slate-800 uppercase ml-1"
+                    >KM. Parcurși la Data Sesizării</label
+                  >
+                  <input
+                    type="number"
+                    id="p-km-sesizare"
+                    placeholder="KM la data sesizării"
+                    min="0"
+                    required
+                    class="w-full p-3 border-2 border-slate-200 rounded-lg text-sm font-bold"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="text-[9px] font-black text-slate-800 uppercase ml-1"
                     >Stare</label
                   >
                   <select
@@ -1043,6 +1057,10 @@
           data_factura: document.getElementById("p-dfact").value || null,
           tip_garantie: document.getElementById("p-gar").value,
           obs_produs: document.getElementById("p-obs-produs").value || "",
+          km_la_sesizare:
+            document.getElementById("p-km-sesizare").value !== ""
+              ? parseInt(document.getElementById("p-km-sesizare").value)
+              : null,
           reclamatie_client: document.getElementById("p-rec").value || "",
         };
 
@@ -1119,6 +1137,7 @@
                             <p><b>MODEL:</b> ${f.marca_model}</p>
                             <p><b>VIN:</b> <span class="text-blue-700 font-black uppercase font-mono">${f.vin_produs}</span></p>
                             <p><b class="font-black">EMITENT/FACTURĂ:</b> ${f.nr_factura || "-"} / ${f.data_factura ? f.data_factura.split("-").reverse().join("-") : "-"}</p>
+                            <p><b class="font-black">KM. LA DATA SESIZARII:</b> ${f.km_la_sesizare != null ? f.km_la_sesizare + " km" : "-"}</p>
                             <p><b>GARANȚIE:</b> ${f.tip_garantie}</p>
                             <p><b class="font-black">OBSERVAȚII:</b> ${f.obs_produs || "-"}</p>
                         </div>
@@ -1270,6 +1289,7 @@
             : "",
           "Tip Garantie": f.tip_garantie,
           "Observatii Produs": f.obs_produs,
+          "KM Sesizare": f.km_la_sesizare != null ? f.km_la_sesizare : "",
           "Reclamatie Client": f.reclamatie_client,
           Status: f.status,
         }));
