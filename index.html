@@ -772,6 +772,7 @@
 
           document.getElementById("c-data-auto").value = getRoTime();
           loadFise();
+          _startRealtime();
         } else {
           if (!storedU) alert("Date incorecte!");
           else localStorage.removeItem("geeli_session");
@@ -849,7 +850,7 @@
                           areDeleteBtn
                             ? `<button
                             type="button"
-                            class="factura-btn flex items-center justify-center bg-slate-600 hover:bg-blue-700 text-white rounded-lg transition active:scale-95"
+                            class="factura-btn flex items-center justify-center bg-slate-400 hover:bg-blue-700 text-white rounded-lg transition active:scale-95"
                             style="width:28px;height:28px;padding:0;flex-shrink:0;"
                             title="Adaugă / Înlocuiește factură"
                             onclick="triggerFacturaUploadRow('${f.id}', this)">
@@ -859,7 +860,7 @@
                         }
                         <button
                             type="button"
-                            class="factura-btn flex items-center justify-center rounded-lg transition active:scale-95 ${f.factura_path ? "bg-slate-600 hover:bg-blue-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}"
+                            class="factura-btn flex items-center justify-center rounded-lg transition active:scale-95 ${f.factura_path ? "bg-slate-900 hover:bg-blue-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}"
                             style="width:28px;height:28px;padding:0;flex-shrink:0;"
                             title="${f.factura_path ? "Vizualizează factura" : "Nicio factură atașată"}"
                             ${f.factura_path ? `onclick="viewFacturaRow('${f.factura_path}')"` : "disabled"}>
@@ -869,7 +870,7 @@
                           areDeleteBtn
                             ? `<button
                             type="button"
-                            class="factura-btn flex items-center justify-center rounded-lg transition active:scale-95 ${f.factura_path ? "bg-red-600 hover:bg-red-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}"
+                            class="factura-btn flex items-center justify-center rounded-lg transition active:scale-95 ${f.factura_path ? "bg-red-400 hover:bg-red-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}"
                             style="width:28px;height:28px;padding:0;flex-shrink:0;"
                             title="${f.factura_path ? "Șterge factura" : "Nicio factură atașată"}"
                             ${f.factura_path ? `onclick="deleteFacturaRow('${f.id}', '${f.factura_path}', this)"` : "disabled"}>
@@ -1238,11 +1239,13 @@
         document
           .getElementById(btnId)
           .classList.add("border-b-4", "border-blue-600", "text-blue-600");
+        _flushPendingRefresh();
         window.scrollTo(0, 0);
       }
 
       function closeModal() {
         document.getElementById("modal-view").classList.add("hidden");
+        _flushPendingRefresh();
       }
 
       function filterTable() {
@@ -1594,6 +1597,53 @@
       }
 
       // ── END FACTURA STORAGE ──────────────────────────────────────────────
+
+      // ── SUPABASE REALTIME ─────────────────────────────────────────────────
+      let _realtimePending = false;
+      let _realtimeChannel = null;
+
+      function _isListTabActive() {
+        return document
+          .getElementById("tab-list")
+          ?.classList.contains("active");
+      }
+
+      function _hasOpenModal() {
+        const modals = ["modal-view"];
+        return modals.some((id) => {
+          const el = document.getElementById(id);
+          return el && !el.classList.contains("hidden");
+        });
+      }
+
+      // Apelat când userul revine la lista de fișe (switchTab / closeModal)
+      function _flushPendingRefresh() {
+        if (!_realtimePending) return;
+        if (!activeUser || activeUser.rol === "none") return;
+        if (!_isListTabActive()) return;
+        if (_hasOpenModal()) return;
+        _realtimePending = false;
+        loadFise(currentPage);
+      }
+
+      function _startRealtime() {
+        if (_realtimeChannel) return;
+        _realtimeChannel = _supa
+          .channel("fise-changes-mag")
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "fise" },
+            () => {
+              if (_isListTabActive() && !_hasOpenModal()) {
+                loadFise(currentPage);
+              } else {
+                _realtimePending = true;
+              }
+            },
+          )
+          .subscribe();
+      }
+      // ── END SUPABASE REALTIME ─────────────────────────────────────────────
     </script>
   </body>
 </html>
