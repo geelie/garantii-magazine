@@ -1178,7 +1178,8 @@
                             <p><b>CATEGORIE:</b> ${f.categorie}</p>
                             <p><b>MODEL:</b> ${f.marca_model}</p>
                             <p><b>VIN:</b> <span class="text-blue-700 font-black uppercase font-mono">${f.vin_produs}</span></p>
-                            <p><b class="font-black">EMITENT/FACTURĂ:</b> ${f.nr_factura || "-"} / ${f.data_factura ? f.data_factura.split("-").reverse().join("-") : "-"}</p>
+                            <p><b class="font-black">EMITENT FACTURĂ:</b> ${f.magazin || "-"}</p>
+                            <p><b class="font-black">NR. FACTURĂ:</b> ${f.nr_factura || "-"} / ${f.data_factura ? f.data_factura.split("-").reverse().join("-") : "-"}</p>
                             <p><b class="font-black">KM. LA DATA SESIZARII:</b> ${f.km_la_sesizare != null ? f.km_la_sesizare + " km" : "-"}</p>
                             <p><b>GARANȚIE:</b> ${f.tip_garantie}</p>
                             <p><b class="font-black">OBSERVAȚII:</b> ${f.obs_produs || "-"}</p>
@@ -1199,11 +1200,15 @@
                             <p class="italic pl-20 text-slate-900">...................</p>
                         </div>
                     </div>
+                    <div class="mt-auto pt-4 text-[11px] leading-tight text-black border-t border-slate-100">
+    <p class="font-bold mb-0.5">
+        CERTIFICAT DE CALITATE ȘI GARANȚIE A REPARAȚIILOR
+    </p>
                     <div class="mt-auto pt-4 text-[11px] leading-tight text-black italic border-t border-slate-100">
                         <p class="mb-2">În conformitate cu O.G. 21/1992 republicată și OUG 140/2021, unitatea noastră garantează lucrările de reparații executate, după cum urmează:</p>
                         <ul class="list-disc pl-5 space-y-1">
                             <li>3 luni de la data recepției vehiculului, dacă lucrarea de reparații nu a necesitat înlocuiri de piese</li>
-                            <li>6 luni pentru manoperă și 12 luni pentru piesele furnizate de unitate</li>
+                            <li>6 luni pentru lucrările efectuate și 12 luni pentru piesele furnizate de unitate</li>
                         </ul>
                     </div>
                     <div class="mt-auto pt-4 text-[11px] leading-tight text-slate-400 italic border-t border-slate-100">
